@@ -1,0 +1,16 @@
+FROM alpine:3.18
+
+LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
+      Description="Deployer image that includes awscli, kubectl, helm, jq and many other modules."
+
+WORKDIR /root
+
+# Enable edge repository
+RUN echo 'https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
+
+RUN apk add --update-cache \
+    aws-cli \
+    jq \
+    helm \
+    kubectl \
+    && rm -rf /var/cache/apk/*
