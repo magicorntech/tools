@@ -12,7 +12,6 @@ phases:
       - echo $CODEBUILD_SOURCE_VERSION
       - echo Checking tool versions...
       - aws --version
-      - helm version
       - echo Logging in to Amazon ECR...
       - aws ecr-public get-login-password | docker login --username AWS --password-stdin $REPOSITORY_URI
   build:
