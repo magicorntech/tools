@@ -1,0 +1,36 @@
+FROM alpine:3.18
+
+LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
+      Description="Very lightweight debug image that includes troubleshooting tools for Kubernetes."
+
+WORKDIR /root
+
+# Enable edge repository
+RUN echo 'https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
+
+RUN apk add --update-cache \
+    mtr \
+    curl \
+    bwm-ng \
+    openssl \
+    openssh \
+    netcat-openbsd \
+    iputils \
+    busybox-extras \
+    bind-tools \
+    iotop \
+    htop \
+    iftop \
+    bmon \
+    tcpdump \
+    speedtest-cli \
+    kubectl \
+    aws-cli \
+    jq \
+    atop \
+    lsblk \
+    postgresql15-client \
+    mysql-client \
+    mongodb-tools \
+    redis \
+    && rm -rf /var/cache/apk/*

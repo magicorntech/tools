@@ -19,6 +19,7 @@ phases:
       - echo Build started on `date`
       - echo Building the Docker image...
       - docker build -f dockerfiles/deploy -t $REPOSITORY_URI/$PROJECT-deploy:$TAG_NUMBER -t $REPOSITORY_URI/$PROJECT-deploy:latest .
+      - docker build -f dockerfiles/debug -t $REPOSITORY_URI/$PROJECT-debug:$TAG_NUMBER -t $REPOSITORY_URI/$PROJECT-debug:latest .
       - echo Build completed.
   post_build:
     commands:
@@ -26,5 +27,7 @@ phases:
       - echo Pushing the Docker images...
       - docker push $REPOSITORY_URI/$PROJECT-deploy:$TAG_NUMBER
       - docker push $REPOSITORY_URI/$PROJECT-deploy:latest
+      - docker push $REPOSITORY_URI/$PROJECT-debug:$TAG_NUMBER
+      - docker push $REPOSITORY_URI/$PROJECT-debug:latest
       - echo Post build completed.
       - echo Build passed.
