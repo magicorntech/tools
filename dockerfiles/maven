@@ -7,8 +7,8 @@ LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
       Description="Maven Docker image with Docker client and awscli, made for GitLab CI."
 
 # Install Docker client
-RUN curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz \
-    && tar xzvf docker-${DOCKER_VERSION}.tgz --strip 1 -C /usr/local/bin docker/docker
+RUN curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-$DOCKER_VERSION.tgz \
+    && tar xzvf docker-$DOCKER_VERSION.tgz --strip 1 -C /usr/local/bin docker/docker
 
 # Install awscli
 RUN yum update && \
