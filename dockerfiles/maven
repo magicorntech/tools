@@ -7,8 +7,9 @@ LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
 ARG DOCKER_VERSION
 
 # Install Docker client
-RUN curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-$DOCKER_VERSION.tgz \
-    && tar xzvf docker-$DOCKER_VERSION.tgz --strip 1 -C /usr/local/bin docker/docker
+RUN curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-$DOCKER_VERSION.tgz && \
+    tar xzvf docker-$DOCKER_VERSION.tgz --strip 1 -C /usr/local/bin docker/docker && \
+    rm -f docker-$DOCKER_VERSION.tgz
 
 # Install awscli
 RUN yum install -y awscli && \
