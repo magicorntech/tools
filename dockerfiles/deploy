@@ -9,6 +9,7 @@ WORKDIR /root
 RUN echo 'https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
 
 RUN apk add --update-cache \
+    curl \
     git \
     aws-cli \
     jq \
