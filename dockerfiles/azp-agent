@@ -12,7 +12,7 @@ ENV TARGETARCH="linux-musl-x64"
 
 WORKDIR /azp/
 
-COPY src/start.sh ./
+COPY dockerfiles/src/start.sh ./
 RUN chmod +x ./start.sh
 
 RUN adduser -D agent
