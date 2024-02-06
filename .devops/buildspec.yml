@@ -10,12 +10,14 @@ phases:
   pre_build:
     commands:
       - REPOSITORY_URI=public.ecr.aws/magicorn
+      - REPOSITORY_URI_PRIVATE=661204815105.dkr.ecr.us-east-1.amazonaws.com
       - TAG_NUMBER="$(git describe --tags --abbrev=0)"
       - echo $CODEBUILD_SOURCE_VERSION
       - echo Checking tool versions...
       - aws --version
       - echo Logging in to Amazon ECR...
       - aws ecr-public get-login-password | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - aws ecr get-login-password | docker login --username AWS --password-stdin $REPOSITORY_URI_PRIVATE
   build:
     commands:
       - echo Build started on `date`

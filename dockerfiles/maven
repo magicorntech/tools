@@ -1,5 +1,5 @@
 ARG MAVEN_IMAGE
-FROM maven:$MAVEN_IMAGE
+FROM 661204815105.dkr.ecr.us-east-1.amazonaws.com/maven:$MAVEN_IMAGE
 
 LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
       Description="Maven Docker image with Docker client and awscli, made for GitLab CI."

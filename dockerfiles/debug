@@ -1,4 +1,4 @@
-FROM alpine:3.18
+FROM 661204815105.dkr.ecr.us-east-1.amazonaws.com/alpine:3.18
 
 LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
       Description="Very lightweight debug image that includes troubleshooting tools for Kubernetes."
