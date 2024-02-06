@@ -12,6 +12,7 @@ RUN curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-$D
     rm -f docker-$DOCKER_VERSION.tgz
 
 # Install awscli
-RUN yum install -y awscli && \
-    yum clean all && \
-    rm -rf /var/cache/yum
+RUN apt update && \
+    apt install -y awscli && \
+    apt autoremove -y && \
+    rm -rf /var/lib/apt/lists/*

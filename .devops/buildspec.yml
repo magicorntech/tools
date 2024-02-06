@@ -4,7 +4,7 @@ env:
   variables:
     PROJECT: tools
     DOCKER_VERSION: 23.0.6
-    MAVEN_IMAGE: 3.6.3-amazoncorretto-11
+    MAVEN_IMAGE: 3.9.5-eclipse-temurin-21
 
 phases:
   pre_build:
