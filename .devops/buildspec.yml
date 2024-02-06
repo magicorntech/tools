@@ -23,6 +23,7 @@ phases:
       - docker build -f dockerfiles/deploy -t $REPOSITORY_URI/$PROJECT-deploy:$TAG_NUMBER -t $REPOSITORY_URI/$PROJECT-deploy:latest .
       - docker build -f dockerfiles/debug -t $REPOSITORY_URI/$PROJECT-debug:$TAG_NUMBER -t $REPOSITORY_URI/$PROJECT-debug:latest .
       - docker build -f dockerfiles/maven --build-arg MAVEN_IMAGE=$MAVEN_IMAGE --build-arg DOCKER_VERSION=$DOCKER_VERSION -t $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-$TAG_NUMBER -t $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-latest .
+      - docker build -f dockerfiles/azp-agent -t $REPOSITORY_URI/$PROJECT-azp-agent:$TAG_NUMBER -t $REPOSITORY_URI/$PROJECT-azp-agent:latest .
       - echo Build completed.
   post_build:
     commands:
@@ -34,5 +35,7 @@ phases:
       - docker push $REPOSITORY_URI/$PROJECT-debug:latest
       - docker push $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-$TAG_NUMBER
       - docker push $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-latest
+      - docker push $REPOSITORY_URI/$PROJECT-azp-agent:$TAG_NUMBER
+      - docker push $REPOSITORY_URI/$PROJECT-azp-agent:latest
       - echo Post build completed.
       - echo Build passed.

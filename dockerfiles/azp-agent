@@ -1,0 +1,25 @@
+FROM public.ecr.aws/magicorn/tools-deploy:latest
+
+LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
+      Description="Deployer image that includes awscli, kubectl, helm, jq and many other modules made for Azure DevOps Pipelines."
+
+RUN apk add --update-cache \
+    bash \
+    icu-libs \
+    && rm -rf /var/cache/apk/*
+
+ENV TARGETARCH="linux-musl-x64"
+
+WORKDIR /azp/
+
+COPY src/start.sh ./
+RUN chmod +x ./start.sh
+
+RUN adduser -D agent
+RUN chown agent ./
+
+USER agent
+# Another option is to run the agent as root.
+# ENV AGENT_ALLOW_RUNASROOT="true"
+
+ENTRYPOINT ./start.sh
