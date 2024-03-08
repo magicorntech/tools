@@ -15,4 +15,5 @@ RUN apk add --update-cache \
     jq \
     helm \
     kubectl \
+    openssh-client \
     && rm -rf /var/cache/apk/*
