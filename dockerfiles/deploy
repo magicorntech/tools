@@ -5,9 +5,6 @@ LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
 
 WORKDIR /root
 
-# Enable edge repository
-RUN echo 'https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
-
 RUN apk add --update-cache \
     curl \
     git \

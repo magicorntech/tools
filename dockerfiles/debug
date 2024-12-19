@@ -1,12 +1,9 @@
-FROM 661204815105.dkr.ecr.us-east-1.amazonaws.com/alpine:3.18
+FROM 661204815105.dkr.ecr.us-east-1.amazonaws.com/alpine:3.19
 
 LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
       Description="Very lightweight debug image that includes troubleshooting tools for Kubernetes."
 
 WORKDIR /root
-
-# Enable edge repository
-RUN echo 'https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
 
 RUN apk add --update-cache \
     mtr \
