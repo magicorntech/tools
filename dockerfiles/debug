@@ -11,6 +11,7 @@ RUN echo 'https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repo
 RUN apk add --update-cache \
     mtr \
     curl \
+    colordiff \
     bwm-ng \
     openssl \
     openssh \
