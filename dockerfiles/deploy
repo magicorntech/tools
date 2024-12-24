@@ -1,11 +1,12 @@
 FROM 661204815105.dkr.ecr.us-east-1.amazonaws.com/alpine:3.19
 
 LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
-      Description="Deployer image that includes awscli, kubectl, helm, jq and many other modules."
+    Description="Deployer image that includes awscli, kubectl, helm, jq and many other modules."
 
 WORKDIR /root
 
 RUN apk add --update-cache \
+    bash \
     curl \
     git \
     aws-cli \
