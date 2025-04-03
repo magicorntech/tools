@@ -1,4 +1,5 @@
-FROM public.ecr.aws/magicorn/tools-deploy:latest
+ARG TAG_NUMBER
+FROM public.ecr.aws/magicorn/tools-deploy:$TAG_NUMBER
 
 LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
       Description="Deployer image that includes awscli, kubectl, helm, jq and many other modules made for Azure DevOps Pipelines."
