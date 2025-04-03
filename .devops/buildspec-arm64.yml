@@ -11,8 +11,7 @@ phases:
     commands:
       - REPOSITORY_URI=public.ecr.aws/magicorn
       - REPOSITORY_URI_PRIVATE=661204815105.dkr.ecr.us-east-1.amazonaws.com
-      - TAG_NUMBER="$(git describe --tags --abbrev=0)-amd64"
-      - TAG_NUMBER_ARM64="$(git describe --tags --abbrev=0)-arm64"
+      - TAG_NUMBER="$(git describe --tags --abbrev=0)-arm64"
       - echo $CODEBUILD_SOURCE_VERSION
       - echo Checking tool versions...
       - aws --version
@@ -36,15 +35,5 @@ phases:
       - docker push $REPOSITORY_URI/$PROJECT-debug:$TAG_NUMBER
       - docker push $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-$TAG_NUMBER
       - docker push $REPOSITORY_URI/$PROJECT-azp-agent:$TAG_NUMBER
-      - echo Generating manifests...
-      - docker manifest create $REPOSITORY_URI/$PROJECT-deploy:latest $REPOSITORY_URI/$PROJECT-deploy:$TAG_NUMBER $REPOSITORY_URI/$PROJECT-deploy:$TAG_NUMBER_ARM64
-      - docker manifest create $REPOSITORY_URI/$PROJECT-debug:latest $REPOSITORY_URI/$PROJECT-debug:$TAG_NUMBER $REPOSITORY_URI/$PROJECT-debug:$TAG_NUMBER_ARM64
-      - docker manifest create $REPOSITORY_URI/$PROJECT-maven:latest $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-$TAG_NUMBER $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-$TAG_NUMBER_ARM64
-      - docker manifest create $REPOSITORY_URI/$PROJECT-azp-agent:latest $REPOSITORY_URI/$PROJECT-azp-agent:$TAG_NUMBER $REPOSITORY_URI/$PROJECT-azp-agent:$TAG_NUMBER_ARM64
-      - echo Pushing manifests...
-      - docker manifest push $REPOSITORY_URI/$PROJECT-deploy:latest
-      - docker manifest push $REPOSITORY_URI/$PROJECT-debug:latest
-      - docker manifest push $REPOSITORY_URI/$PROJECT-maven:latest
-      - docker manifest push $REPOSITORY_URI/$PROJECT-azp-agent:latest
       - echo Post build completed.
       - echo Build passed.
