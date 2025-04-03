@@ -39,12 +39,12 @@ phases:
       - echo Generating manifests...
       - docker manifest create $REPOSITORY_URI/$PROJECT-deploy:latest $REPOSITORY_URI/$PROJECT-deploy:$TAG_NUMBER $REPOSITORY_URI/$PROJECT-deploy:$TAG_NUMBER_ARM64
       - docker manifest create $REPOSITORY_URI/$PROJECT-debug:latest $REPOSITORY_URI/$PROJECT-debug:$TAG_NUMBER $REPOSITORY_URI/$PROJECT-debug:$TAG_NUMBER_ARM64
-      - docker manifest create $REPOSITORY_URI/$PROJECT-maven:latest $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-$TAG_NUMBER $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-$TAG_NUMBER_ARM64
+      - docker manifest create $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-latest $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-$TAG_NUMBER $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-$TAG_NUMBER_ARM64
       - docker manifest create $REPOSITORY_URI/$PROJECT-azp-agent:latest $REPOSITORY_URI/$PROJECT-azp-agent:$TAG_NUMBER $REPOSITORY_URI/$PROJECT-azp-agent:$TAG_NUMBER_ARM64
       - echo Pushing manifests...
       - docker manifest push $REPOSITORY_URI/$PROJECT-deploy:latest
       - docker manifest push $REPOSITORY_URI/$PROJECT-debug:latest
-      - docker manifest push $REPOSITORY_URI/$PROJECT-maven:latest
+      - docker manifest push $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-latest
       - docker manifest push $REPOSITORY_URI/$PROJECT-azp-agent:latest
       - echo Post build completed.
       - echo Build passed.
