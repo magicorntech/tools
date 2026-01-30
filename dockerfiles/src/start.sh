@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# Set TARGETARCH from file if not already set (for multi-platform support)
+if [ -z "${TARGETARCH}" ] && [ -f /tmp/targetarch ]; then
+  export TARGETARCH=$(cat /tmp/targetarch)
+fi
+
 if [ -z "${AZP_URL}" ]; then
   echo 1>&2 "error: missing AZP_URL environment variable"
   exit 1

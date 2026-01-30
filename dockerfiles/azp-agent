@@ -1,12 +1,26 @@
 # Use Debian base for glibc compatibility (Node.js binaries require glibc)
 # Debian already includes glibc, so no need for manual installation
 # Using ECR private registry to avoid Docker Hub rate limits
+# Note: ECR doesn't support multi-platform manifests, so we use platform-specific tags
+# Buildspec should use --platform flag to select the correct base image
 FROM 661204815105.dkr.ecr.us-east-1.amazonaws.com/debian:bookworm-slim
 
 LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
       Description="Azure DevOps Pipelines agent with glibc support for Node.js compatibility."
 
+# Docker automatically provides TARGETPLATFORM build arg (e.g., linux/amd64, linux/arm64)
+# Convert it to Azure Pipelines format (linux-x64 or linux-arm64)
+ARG TARGETPLATFORM=linux/amd64
+RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
+        echo "linux-x64" > /tmp/targetarch; \
+    elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
+        echo "linux-arm64" > /tmp/targetarch; \
+    else \
+        echo "linux-x64" > /tmp/targetarch; \
+    fi
+
 # Install required packages for Azure Pipelines agent
+# Package names are the same for both amd64 and arm64
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     bash \
@@ -19,7 +33,8 @@ RUN apt-get update && \
     jq \
     && rm -rf /var/lib/apt/lists/*
 
-ENV TARGETARCH="linux-x64"
+# TARGETARCH will be set by start.sh from /tmp/targetarch file
+# This allows it to work for both amd64 and arm64 builds
 
 WORKDIR /azp/
 
