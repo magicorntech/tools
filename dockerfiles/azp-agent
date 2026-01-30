@@ -20,6 +20,15 @@ RUN apk add --update-cache --no-cache \
     && (apk del gcompat 2>/dev/null || true) \
     && rm -rf /tmp/glibc*.apk /etc/apk/keys/sgerrand.rsa.pub /var/cache/apk/*
 
+# Ensure glibc dynamic linker is accessible
+# Create /lib64 directory and symlink the dynamic linker
+RUN mkdir -p /lib64 && \
+    if [ -f /usr/glibc-compat/lib/ld-linux-x86-64.so.2 ]; then \
+        ln -sf /usr/glibc-compat/lib/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2; \
+    elif [ -f /lib/ld-linux-x86-64.so.2 ]; then \
+        ln -sf /lib/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2; \
+    fi
+
 # Use glibc-based architecture for Azure Pipelines agent
 ENV TARGETARCH="linux-x64"
 
