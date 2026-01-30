@@ -1,47 +1,29 @@
-# Use Debian base for glibc compatibility (Node.js binaries require glibc)
-# Debian already includes glibc, so no need for manual installation
-# Using ECR private registry to avoid Docker Hub rate limits
-# Note: ECR doesn't support multi-platform manifests, so we use platform-specific tags
-# Buildspec should use --platform flag to select the correct base image
-FROM 661204815105.dkr.ecr.us-east-1.amazonaws.com/debian:bookworm-slim
+ARG TAG_NUMBER
+FROM public.ecr.aws/magicorn/tools-deploy:$TAG_NUMBER
 
 LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
-      Description="Azure DevOps Pipelines agent with glibc support for Node.js compatibility."
+      Description="Deployer image that includes awscli, kubectl, helm, jq and many other modules made for Azure DevOps Pipelines."
 
-# Docker automatically provides TARGETPLATFORM build arg (e.g., linux/amd64, linux/arm64)
-# Convert it to Azure Pipelines format (linux-x64 or linux-arm64)
-ARG TARGETPLATFORM=linux/amd64
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
-        echo "linux-x64" > /tmp/targetarch; \
-    elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
-        echo "linux-arm64" > /tmp/targetarch; \
-    else \
-        echo "linux-x64" > /tmp/targetarch; \
-    fi
-
-# Install required packages for Azure Pipelines agent
-# Package names are the same for both amd64 and arm64
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+# Install glibc compatibility for Node.js (Azure Pipelines agent requires glibc)
+# Azure Pipelines agent's Node.js is compiled for glibc, not musl
+RUN apk add --update-cache --no-cache \
     bash \
+    icu-libs \
     curl \
-    ca-certificates \
-    libicu72 \
-    libstdc++6 \
-    libgcc-s1 \
-    git \
-    jq \
-    && rm -rf /var/lib/apt/lists/*
+    && curl -L https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.35-r1/glibc-2.35-r1.apk -o /tmp/glibc.apk \
+    && curl -L https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.35-r1/glibc-bin-2.35-r1.apk -o /tmp/glibc-bin.apk \
+    && apk add --allow-untrusted /tmp/glibc.apk /tmp/glibc-bin.apk \
+    && rm -rf /tmp/glibc*.apk /var/cache/apk/*
 
-# TARGETARCH will be set by start.sh from /tmp/targetarch file
-# This allows it to work for both amd64 and arm64 builds
+# Use glibc-based architecture for Azure Pipelines agent
+ENV TARGETARCH="linux-x64"
 
 WORKDIR /azp/
 
 COPY dockerfiles/src/start.sh ./
 RUN chmod +x ./start.sh
 
-RUN adduser --disabled-password --gecos "" agent
+RUN adduser -D agent
 RUN chown agent ./
 
 USER agent
