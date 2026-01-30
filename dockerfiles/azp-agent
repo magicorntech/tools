@@ -6,14 +6,19 @@ LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
 
 # Install glibc compatibility for Node.js (Azure Pipelines agent requires glibc)
 # Azure Pipelines agent's Node.js is compiled for glibc, not musl
+# Note: gcompat conflicts with glibc, so we install glibc first, then remove gcompat if it exists
 RUN apk add --update-cache --no-cache \
     bash \
     icu-libs \
     curl \
-    && curl -L https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.35-r1/glibc-2.35-r1.apk -o /tmp/glibc.apk \
-    && curl -L https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.35-r1/glibc-bin-2.35-r1.apk -o /tmp/glibc-bin.apk \
-    && apk add --allow-untrusted /tmp/glibc.apk /tmp/glibc-bin.apk \
-    && rm -rf /tmp/glibc*.apk /var/cache/apk/*
+    wget \
+    ca-certificates \
+    && wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
+    && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.35-r1/glibc-2.35-r1.apk -O /tmp/glibc.apk \
+    && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.35-r1/glibc-bin-2.35-r1.apk -O /tmp/glibc-bin.apk \
+    && apk add --force-overwrite /tmp/glibc.apk /tmp/glibc-bin.apk \
+    && (apk del gcompat 2>/dev/null || true) \
+    && rm -rf /tmp/glibc*.apk /etc/apk/keys/sgerrand.rsa.pub /var/cache/apk/*
 
 # Use glibc-based architecture for Azure Pipelines agent
 ENV TARGETARCH="linux-x64"
