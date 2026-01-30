@@ -9,7 +9,17 @@ RUN apk add --update-cache \
     icu-libs \
     gcompat \
     libstdc++ \
+    wget \
+    ca-certificates \
     && rm -rf /var/cache/apk/*
+
+# Install glibc for Node.js compatibility (Azure Pipelines agents require glibc)
+# The Node.js binaries from Azure Pipelines are compiled for glibc and need fcntl64 symbol
+RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
+    GLIBC_VERSION="2.38-r1" && \
+    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk && \
+    apk add --force-overwrite glibc-${GLIBC_VERSION}.apk && \
+    rm glibc-${GLIBC_VERSION}.apk /etc/apk/keys/sgerrand.rsa.pub
 
 ENV TARGETARCH="linux-x64"
 
