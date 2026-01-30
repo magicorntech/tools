@@ -1,6 +1,7 @@
 # Use Debian base for glibc compatibility (Node.js binaries require glibc)
 # Debian already includes glibc, so no need for manual installation
-FROM debian:bookworm-slim
+# Using ECR private registry to avoid Docker Hub rate limits
+FROM 661204815105.dkr.ecr.us-east-1.amazonaws.com/debian:bookworm-slim
 
 LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
       Description="Azure DevOps Pipelines agent with glibc support for Node.js compatibility."
