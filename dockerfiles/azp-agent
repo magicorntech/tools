@@ -1,25 +1,22 @@
-ARG TAG_NUMBER
-FROM public.ecr.aws/magicorn/tools-deploy:$TAG_NUMBER
+# Use Debian base for glibc compatibility (Node.js binaries require glibc)
+# Debian already includes glibc, so no need for manual installation
+FROM debian:bookworm-slim
 
 LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
-      Description="Deployer image that includes awscli, kubectl, helm, jq and many other modules made for Azure DevOps Pipelines."
+      Description="Azure DevOps Pipelines agent with glibc support for Node.js compatibility."
 
-RUN apk add --update-cache \
+# Install required packages for Azure Pipelines agent
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
     bash \
-    icu-libs \
-    gcompat \
-    libstdc++ \
-    wget \
+    curl \
     ca-certificates \
-    && rm -rf /var/cache/apk/*
-
-# Install glibc for Node.js compatibility (Azure Pipelines agents require glibc)
-# The Node.js binaries from Azure Pipelines are compiled for glibc and need fcntl64 symbol
-RUN GLIBC_VERSION="2.35-r1" && \
-    wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
-    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk && \
-    apk add --force-overwrite glibc-${GLIBC_VERSION}.apk && \
-    rm -f glibc-${GLIBC_VERSION}.apk /etc/apk/keys/sgerrand.rsa.pub
+    libicu72 \
+    libstdc++6 \
+    libgcc-s1 \
+    git \
+    jq \
+    && rm -rf /var/lib/apt/lists/*
 
 ENV TARGETARCH="linux-x64"
 
@@ -28,7 +25,7 @@ WORKDIR /azp/
 COPY dockerfiles/src/start.sh ./
 RUN chmod +x ./start.sh
 
-RUN adduser -D agent
+RUN adduser --disabled-password --gecos "" agent
 RUN chown agent ./
 
 USER agent
