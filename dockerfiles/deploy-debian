@@ -2,7 +2,8 @@
 # Azure Pipelines Node.js görevi (externals/node24) glibc ile derlenmiş binary kullandığı için
 # Alpine (musl) tabanlı imajda "unsupported relocation type 37" ve symbol not found hataları oluşur.
 # Bu imaj azp-agent için kullanılır; Node 24 ve diğer glibc binary'leri çalışır.
-FROM ubuntu:22.04
+# Docker Hub rate limit (429) nedeniyle ECR Public kullanıyoruz.
+FROM public.ecr.aws/ubuntu/ubuntu:22.04_stable
 
 LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
     Description="Deployer image (glibc) for Azure Pipelines agent: awscli, kubectl, helm, jq, etc."
