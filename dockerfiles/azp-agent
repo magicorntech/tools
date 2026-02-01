@@ -4,20 +4,20 @@ FROM public.ecr.aws/magicorn/tools-deploy:$TAG_NUMBER
 LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
       Description="Deployer image that includes awscli, kubectl, helm, jq and many other modules made for Azure DevOps Pipelines."
 
-RUN apk add --update-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
-    icu-libs \
-    && rm -rf /var/cache/apk/*
+    libicu72 \
+    && rm -rf /var/lib/apt/lists/*
 
-ENV TARGETARCH="linux-musl-x64"
+ENV TARGETARCH="linux-x64"
 
 WORKDIR /azp/
 
 COPY dockerfiles/src/start.sh ./
 RUN chmod +x ./start.sh
 
-RUN adduser -D agent
-RUN chown agent ./
+RUN adduser --disabled-password --gecos "" agent \
+    && chown -R agent:agent /azp
 
 USER agent
 # Another option is to run the agent as root.
