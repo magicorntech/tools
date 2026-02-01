@@ -24,6 +24,7 @@ phases:
       - echo Build started on `date`
       - echo Building the Docker image...
       - docker build -f dockerfiles/deploy -t $REPOSITORY_URI/$PROJECT-deploy:$TAG_NUMBER .
+      - docker build -f dockerfiles/deploy-debian --build-arg TARGETARCH=amd64 -t $REPOSITORY_URI/$PROJECT-deploy-debian:$TAG_NUMBER .
       - docker build -f dockerfiles/debug -t $REPOSITORY_URI/$PROJECT-debug:$TAG_NUMBER .
       - docker build -f dockerfiles/maven --build-arg MAVEN_IMAGE=$MAVEN_IMAGE --build-arg DOCKER_VERSION=$DOCKER_VERSION -t $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-$TAG_NUMBER .
       - docker build -f dockerfiles/azp-agent --build-arg TAG_NUMBER=$TAG_NUMBER -t $REPOSITORY_URI/$PROJECT-azp-agent:$TAG_NUMBER .
@@ -33,16 +34,19 @@ phases:
       - echo Build completed on `date`
       - echo Pushing the Docker images...
       - docker push $REPOSITORY_URI/$PROJECT-deploy:$TAG_NUMBER
+      - docker push $REPOSITORY_URI/$PROJECT-deploy-debian:$TAG_NUMBER
       - docker push $REPOSITORY_URI/$PROJECT-debug:$TAG_NUMBER
       - docker push $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-$TAG_NUMBER
       - docker push $REPOSITORY_URI/$PROJECT-azp-agent:$TAG_NUMBER
       - echo Generating manifests...
       - docker manifest create $REPOSITORY_URI/$PROJECT-deploy:latest $REPOSITORY_URI/$PROJECT-deploy:$TAG_NUMBER $REPOSITORY_URI/$PROJECT-deploy:$TAG_NUMBER_ARM64
+      - docker manifest create $REPOSITORY_URI/$PROJECT-deploy-debian:latest $REPOSITORY_URI/$PROJECT-deploy-debian:$TAG_NUMBER $REPOSITORY_URI/$PROJECT-deploy-debian:$TAG_NUMBER_ARM64
       - docker manifest create $REPOSITORY_URI/$PROJECT-debug:latest $REPOSITORY_URI/$PROJECT-debug:$TAG_NUMBER $REPOSITORY_URI/$PROJECT-debug:$TAG_NUMBER_ARM64
       - docker manifest create $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-latest $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-$TAG_NUMBER $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-$TAG_NUMBER_ARM64
       - docker manifest create $REPOSITORY_URI/$PROJECT-azp-agent:latest $REPOSITORY_URI/$PROJECT-azp-agent:$TAG_NUMBER $REPOSITORY_URI/$PROJECT-azp-agent:$TAG_NUMBER_ARM64
       - echo Pushing manifests...
       - docker manifest push $REPOSITORY_URI/$PROJECT-deploy:latest
+      - docker manifest push $REPOSITORY_URI/$PROJECT-deploy-debian:latest
       - docker manifest push $REPOSITORY_URI/$PROJECT-debug:latest
       - docker manifest push $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-latest
       - docker manifest push $REPOSITORY_URI/$PROJECT-azp-agent:latest
