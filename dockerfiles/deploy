@@ -1,17 +1,39 @@
-FROM 661204815105.dkr.ecr.us-east-1.amazonaws.com/alpine:3.19
+# Deploy imajı: awscli, kubectl, helm, jq — glibc (Ubuntu) tabanlı.
+# Hem genel deploy hem de azp-agent base olarak kullanılır; Azure Node (externals/node24) bu ortamda çalışır.
+# Base: ECR Public (Docker Hub rate limit’ten kaçınmak için).
+FROM public.ecr.aws/ubuntu/ubuntu:22.04_stable
 
 LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
-    Description="Deployer image that includes awscli, kubectl, helm, jq and many other modules."
+      Description="Deployer image: awscli, kubectl, helm, jq, git, ssh."
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+ARG TARGETARCH=amd64
 
 WORKDIR /root
 
-RUN apk add --update-cache \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
     bash \
+    ca-certificates \
     curl \
     git \
-    aws-cli \
     jq \
-    helm \
-    kubectl \
     openssh-client \
-    && rm -rf /var/cache/apk/*
+    unzip \
+    && case "$TARGETARCH" in \
+        amd64) \
+            curl -sSfL https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2.zip \
+            && unzip -q awscliv2.zip && ./aws/install && rm -rf awscliv2.zip aws ;; \
+        arm64) \
+            curl -sSfL https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip -o awscliv2.zip \
+            && unzip -q awscliv2.zip && ./aws/install && rm -rf awscliv2.zip aws ;; \
+        *) echo "Unsupported TARGETARCH: $TARGETARCH" && exit 1 ;; \
+    esac \
+    && curl -sSfL "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${TARGETARCH}/kubectl" -o /usr/local/bin/kubectl \
+    && chmod +x /usr/local/bin/kubectl \
+    && curl -sSfL "https://get.helm.sh/helm-v3.13.3-linux-${TARGETARCH}.tar.gz" | tar xz -C /tmp \
+    && mv /tmp/linux-${TARGETARCH}/helm /usr/local/bin/helm && rm -rf /tmp/linux-* \
+    && apt-get purge -y unzip \
+    && apt-get autoremove -y \
+    && rm -rf /var/lib/apt/lists/*

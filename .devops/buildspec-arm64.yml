@@ -22,8 +22,7 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build -f dockerfiles/deploy -t $REPOSITORY_URI/$PROJECT-deploy:$TAG_NUMBER .
-      - docker build -f dockerfiles/deploy-debian --build-arg TARGETARCH=arm64 -t $REPOSITORY_URI/$PROJECT-deploy-debian:$TAG_NUMBER .
+      - docker build -f dockerfiles/deploy --build-arg TARGETARCH=arm64 -t $REPOSITORY_URI/$PROJECT-deploy:$TAG_NUMBER .
       - docker build -f dockerfiles/debug -t $REPOSITORY_URI/$PROJECT-debug:$TAG_NUMBER .
       - docker build -f dockerfiles/maven --build-arg MAVEN_IMAGE=$MAVEN_IMAGE --build-arg DOCKER_VERSION=$DOCKER_VERSION -t $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-$TAG_NUMBER .
       - docker build -f dockerfiles/azp-agent --build-arg TAG_NUMBER=$TAG_NUMBER -t $REPOSITORY_URI/$PROJECT-azp-agent:$TAG_NUMBER .
@@ -33,7 +32,6 @@ phases:
       - echo Build completed on `date`
       - echo Pushing the Docker images...
       - docker push $REPOSITORY_URI/$PROJECT-deploy:$TAG_NUMBER
-      - docker push $REPOSITORY_URI/$PROJECT-deploy-debian:$TAG_NUMBER
       - docker push $REPOSITORY_URI/$PROJECT-debug:$TAG_NUMBER
       - docker push $REPOSITORY_URI/$PROJECT-maven:$MAVEN_IMAGE-$TAG_NUMBER
       - docker push $REPOSITORY_URI/$PROJECT-azp-agent:$TAG_NUMBER

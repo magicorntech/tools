@@ -1,16 +1,17 @@
-ARG TAG_NUMBER
-FROM public.ecr.aws/magicorn/tools-deploy-debian:$TAG_NUMBER
+# Azure Pipelines agent — deploy imajı üzerine agent katmanı.
+# Node (externals/node24) deploy’daki glibc ortamında çalışır.
+ARG TAG_NUMBER=0.1.4-amd64
+FROM public.ecr.aws/magicorn/tools-deploy:${TAG_NUMBER}
 
 LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
       Description="Deployer image that includes awscli, kubectl, helm, jq and many other modules made for Azure DevOps Pipelines."
 
-# Eski Alpine imajındaki apk add (bash, icu-libs) karşılığı; Ubuntu'da bash zaten var, ICU runtime ekliyoruz
 RUN apt-get update \
     && apt-get install -y --no-install-recommends libicu70 \
     && rm -rf /var/lib/apt/lists/*
 
-# linux-x64 = glibc tabanlı agent + Node tool installer'ın indirdiği Node binary ile uyumlu
-ENV TARGETARCH="linux-x64"
+# Agent ve Node tool installer glibc bekliyor; platform linux-x64.
+ENV TARGETARCH=linux-x64
 
 WORKDIR /azp/
 
@@ -21,7 +22,5 @@ RUN adduser --disabled-password --gecos "" agent
 RUN chown -R agent:agent /azp
 
 USER agent
-# Another option is to run the agent as root.
-# ENV AGENT_ALLOW_RUNASROOT="true"
 
-ENTRYPOINT ./start.sh
+ENTRYPOINT ["./start.sh"]
