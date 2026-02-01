@@ -1,4 +1,4 @@
-FROM 661204815105.dkr.ecr.us-east-1.amazonaws.com/alpine:3.19
+FROM 661204815105.dkr.ecr.us-east-1.amazonaws.com/debian:bookworm-2
 
 LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
       Description="Very lightweight debug image that includes troubleshooting tools for Kubernetes."

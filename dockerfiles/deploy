@@ -1,7 +1,8 @@
 # Debian Bookworm (glibc) – Azure Pipelines Node.js (externals/node24) bu tabanda çalışır.
 # Alpine (musl) "unsupported relocation type 37" ve sembol hataları verir.
 # Base image ECR'da tutulur (buildspec pre_build'da sync edilir).
-FROM 661204815105.dkr.ecr.us-east-1.amazonaws.com/debian:bookworm
+ARG BASE_IMAGE=661204815105.dkr.ecr.us-east-1.amazonaws.com/debian:bookworm
+FROM ${BASE_IMAGE}
 
 LABEL Maintainer="Umur Coskuncan <umur@magicorn.co>" \
     Description="Deployer image that includes awscli, kubectl, helm, jq and many other modules."
